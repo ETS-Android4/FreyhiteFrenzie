@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 //keshav says hi
@@ -13,12 +14,14 @@ public class drive extends LinearOpMode {
     public void runOpMode(){
         bot.init(hardwareMap, this);
         waitForStart();
-        double lx = gamepad1.left_stick_x;
-        double rx = gamepad1.right_stick_x;
-        double ly = -gamepad1.left_stick_y;
+        double lx, rx, ly;
         while(opModeIsActive()) {
-            double lf = ly + rx + lx;
-            double lb = ly + rx - lx;
+            lx = gamepad1.left_stick_x;
+            rx = gamepad1.right_stick_x;
+            ly = -gamepad1.left_stick_y;
+
+            double lf = -(ly + rx + lx);
+            double lb = -(ly + rx - lx);
             double rf = ly - rx - lx;
             double rb = ly - rx + lx;
 
@@ -30,21 +33,28 @@ public class drive extends LinearOpMode {
                 ratio = 0;
             }
 
+            if (gamepad1.a == true){
+                bot.rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                bot.rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            }
             bot.leftFront.setPower(lf * ratio);
             bot.leftBack.setPower(lb * ratio);
             bot.rightFront.setPower(rf * ratio);
             bot.rightBack.setPower(rb * ratio);
-
-            if (gamepad1.left_bumper) {
-                bot.spin.setPower(0.8);
-            } else {
-                bot.spin.setPower(0);
-            }
-            if (gamepad1.right_bumper) {
-                bot.collect.setPower(0.8);
-            } else {
-                bot.collect.setPower(0);
-            }
+            telemetry.addData("leftFront:", bot.rightBack.getPower());
+            telemetry.addData("leftSticky", gamepad1.left_stick_y);
+            telemetry.addData("rightFront:",bot.rightFront.getCurrentPosition());
+            telemetry.update();
+//            if (gamepad1.left_bumper) {
+//                bot.spin.setPower(0.8);
+//            } else {
+//                bot.spin.setPower(0);
+//            }
+//            if (gamepad1.right_bumper) {
+//                bot.collect.setPower(0.8);
+//            } else {
+//                bot.collect.setPower(0);
+//            }
         }
 
     }

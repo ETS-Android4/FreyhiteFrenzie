@@ -9,16 +9,18 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 public class robot {
     DcMotor leftBack, leftFront, rightBack, rightFront;
-    DcMotor spin, collect;
+    DcMotor spin; //collect;
     BNO055IMU imu;
     Orientation currentAngle;
+    final static double TICKS_TO_INCH_FORWARD = 7;
+    final static double TICKS_TO_INCH_STRAFE = 69;
     public void init(HardwareMap hardwareMap, LinearOpMode linearOpMode){
         leftBack = hardwareMap.get(DcMotor.class, "leftBack");
         rightBack = hardwareMap.get(DcMotor.class, "rightBack");
         leftFront = hardwareMap.get(DcMotor.class, "leftFront");
         rightFront = hardwareMap.get(DcMotor.class, "rightFront");
         spin = hardwareMap.get(DcMotor.class, "spin");
-        collect = hardwareMap.get(DcMotor.class, "collect");
+//        collect = hardwareMap.get(DcMotor.class, "collect");
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.getAngularOrientation();
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -26,8 +28,8 @@ public class robot {
         imu.initialize(parameters);
         currentAngle = imu.getAngularOrientation();
     }
-    public void moveStraight(double inches, double speed, double ticksToInch, double direction){
-        while ((double)leftFront.getCurrentPosition() * direction/ ticksToInch <= inches){
+    public void moveStraight(double inches, double speed, double direction){
+        while ((double)leftFront.getCurrentPosition() * direction/TICKS_TO_INCH_FORWARD <= inches){
             leftFront.setPower(direction * speed);
             leftBack.setPower(direction* speed);
             rightFront.setPower(direction * speed);
@@ -40,8 +42,8 @@ public class robot {
         leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
-    public void strafe(double inches, int direction, double speed, double ticksToInch){
-            while ((double)leftFront.getCurrentPosition() / ticksToInch <= (double)inches){
+    public void strafe(double inches, int direction, double speed){
+            while ((double)leftFront.getCurrentPosition() / TICKS_TO_INCH_STRAFE <= (double)inches){
                 leftFront.setPower(direction * speed);
                 leftBack.setPower(-direction * speed);
                 rightFront.setPower(-direction * speed);
@@ -56,7 +58,10 @@ public class robot {
         //if direction is 1, strafe right, if direction is -1 strafe left
         //strafe a certain number of inches
     }
-    public void turnTo(double angle, double speed, int direction){
+    public void turnTo(double angle, double speed){
+
+        int direction = (int)((currentAngle.firstAngle-angle)/Math.abs(currentAngle.firstAngle-angle));
+
         while (currentAngle.firstAngle <= angle){
             leftFront.setPower(direction * speed);
             leftBack.setPower(direction * speed);
