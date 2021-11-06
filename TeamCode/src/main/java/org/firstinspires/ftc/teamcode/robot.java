@@ -36,12 +36,15 @@ public class robot {
         imu.getAngularOrientation();
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+
         imu.initialize(parameters);
         currentAngle = imu.getAngularOrientation();
         this.linearOpMode = linearOpMode;
         this.hardwareMap = hardwareMap;
     }
     public void moveStraight(double inches, double speed, double direction){
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         while ((double)rightFront.getCurrentPosition() * direction/TICKS_TO_INCH_FORWARD <= inches){
             leftFront.setPower(direction * speed);
             leftBack.setPower(direction* speed);
@@ -54,8 +57,7 @@ public class robot {
         leftBack.setPower(0);
         rightFront.setPower(0);
         rightBack.setPower(0);
-        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
     }
     public void strafe(double inches, int direction, double speed){
             while ((double)rightFront.getCurrentPosition() / TICKS_TO_INCH_STRAFE <= (double)inches){
@@ -69,24 +71,32 @@ public class robot {
         leftBack.setPower(0);
         rightFront.setPower(0);
         rightBack.setPower(0);
-        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         //if direction is 1, strafe right, if direction is -1 strafe left
         //strafe a certain number of inches
     }
     public void turnTo(double angle, double speed){
         int direction = (int)((imu.getAngularOrientation().firstAngle-angle)/Math.abs(imu.getAngularOrientation().firstAngle-angle));
-        while (imu.getAngularOrientation().firstAngle <= angle){
+        while (angleWrap(Math.abs(angle - imu.getAngularOrientation().firstAngle)) > 0.06){
             leftFront.setPower(direction * speed);
             leftBack.setPower(direction * speed);
             rightFront.setPower(-direction * speed);
             rightBack.setPower(-direction * speed);
             linearOpMode.telemetry.addData("angle", imu.getAngularOrientation().firstAngle);
+            linearOpMode.telemetry.addData("current-goal", Math.abs(imu.getAngularOrientation().firstAngle - angle));
             linearOpMode.telemetry.update();
         }
         leftFront.setPower(0);
         leftBack.setPower(0);
         rightFront.setPower(0);
         rightBack.setPower(0);
+    }
+    public static double angleWrap(double angle){
+        while(angle>Math.PI){
+            angle-=2*Math.PI;
+        }
+        while(angle<-Math.PI){
+            angle+=2*Math.PI;
+        }
+        return angle;
     }
 }

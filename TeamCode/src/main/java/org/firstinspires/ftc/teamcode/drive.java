@@ -41,6 +41,7 @@ public class drive extends LinearOpMode {
             bot.leftBack.setPower(lb * ratio);
             bot.rightFront.setPower(rf * ratio);
             bot.rightBack.setPower(rb * ratio);
+            telemetry.addData("heading", bot.imu.getAngularOrientation().firstAngle);
             telemetry.addData("leftFront:", bot.rightBack.getPower());
             telemetry.addData("leftSticky", gamepad1.left_stick_y);
             telemetry.addData("rightFront:",bot.rightFront.getCurrentPosition());
