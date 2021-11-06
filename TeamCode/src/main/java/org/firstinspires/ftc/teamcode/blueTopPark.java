@@ -8,6 +8,7 @@ public class blueTopPark extends LinearOpMode {
     robot bot = new robot();
     @Override
     public void runOpMode(){
+        waitForStart();
         bot.init(hardwareMap, this);
         bot.moveStraight(48, 0.8, 1);
         bot.strafe(192, 1, 0.8);

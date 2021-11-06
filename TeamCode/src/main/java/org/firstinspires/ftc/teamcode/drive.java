@@ -20,8 +20,8 @@ public class drive extends LinearOpMode {
             rx = gamepad1.right_stick_x;
             ly = -gamepad1.left_stick_y;
 
-            double lf = -(ly + rx + lx);
-            double lb = -(ly + rx - lx);
+            double lf = ly + rx + lx;
+            double lb = ly + rx - lx;
             double rf = ly - rx - lx;
             double rb = ly - rx + lx;
 
@@ -33,7 +33,7 @@ public class drive extends LinearOpMode {
                 ratio = 0;
             }
 
-            if (gamepad1.a == true){
+            if (gamepad1.a){
                 bot.rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 bot.rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             }
@@ -45,11 +45,19 @@ public class drive extends LinearOpMode {
             telemetry.addData("leftSticky", gamepad1.left_stick_y);
             telemetry.addData("rightFront:",bot.rightFront.getCurrentPosition());
             telemetry.update();
-//            if (gamepad1.left_bumper) {
-//                bot.spin.setPower(0.8);
-//            } else {
-//                bot.spin.setPower(0);
-//            }
+
+            if (gamepad1.left_bumper) {
+                bot.spin.setPower(0.6);
+            } else {
+                bot.spin.setPower(0);
+            }
+
+            if (gamepad1.right_bumper) {
+                bot.spin.setPower(-0.6);
+            }
+            else{
+                bot.spin.setPower(0);
+            }
 //            if (gamepad1.right_bumper) {
 //                bot.collect.setPower(0.8);
 //            } else {
