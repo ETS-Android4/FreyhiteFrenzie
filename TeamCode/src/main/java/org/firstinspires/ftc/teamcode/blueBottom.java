@@ -14,22 +14,23 @@ public class blueBottom extends LinearOpMode {
     public void runOpMode(){
         waitForStart();
         bot.init(hardwareMap, this);
-        bot.moveStraight(4, 0.4, 1);
-        sleep(2000);
+        bot.moveStraight(2, 0.4, 1);
+        sleep(1000);
         turnTo(Math.PI/2, 0.35);
-        bot.moveStraight(8,0.3,-1);
-        //bot.moveStraight(6, 0.4, -1);
-//        bot.spin.setPower(0.6);
-//        sleep(4000);
-//        bot.spin.setPower(0);
-//        bot.strafe(48, 1, 0.4);
-//        bot.moveStraight(4, 0.4, -1);
+        bot.moveStraight(14,0.3,-1);
+        bot.spin.setPower(0.6);
+        sleep(5000);
+        bot.spin.setPower(0);
+        bot.rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        bot.rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        bot.strafe(13, 1, 0.3);
+        bot.moveStraight(4,.3,-1);
 
 
     }
     public void turnTo(double angle, double speed){
         int direction = (int)((bot.imu.getAngularOrientation().firstAngle-angle)/Math.abs(bot.imu.getAngularOrientation().firstAngle-angle));
-        while (Math.abs(angle - bot.imu.getAngularOrientation().firstAngle) > 0.06){
+        while (Math.abs(angle - bot.imu.getAngularOrientation().firstAngle) > 0.04){
             bot.leftFront.setPower(direction * speed);
             bot.leftBack.setPower(direction * speed);
             bot.rightFront.setPower(-direction * speed);
@@ -42,6 +43,8 @@ public class blueBottom extends LinearOpMode {
         bot.leftBack.setPower(0);
         bot.rightFront.setPower(0);
         bot.rightBack.setPower(0);
+        bot.rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        bot.rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
 }

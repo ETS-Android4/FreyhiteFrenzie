@@ -13,16 +13,18 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 public class robot {
     DcMotor leftBack, leftFront, rightBack, rightFront;
-    DcMotor spin; //collect;
+    DcMotor spin;
+    Servo collection;//collect;
     BNO055IMU imu;
     Orientation currentAngle;
     LinearOpMode linearOpMode;
     HardwareMap hardwareMap;
     final static double TICKS_TO_INCH_FORWARD = 36.87;
-    final static double TICKS_TO_INCH_STRAFE = 46.68;
+    final static double TICKS_TO_INCH_STRAFE = 70.68;
     public void init(HardwareMap hardwareMap, LinearOpMode linearOpMode){
         leftBack = hardwareMap.get(DcMotor.class, "leftBack");
         rightBack = hardwareMap.get(DcMotor.class, "rightBack");
@@ -30,6 +32,7 @@ public class robot {
         rightFront = hardwareMap.get(DcMotor.class, "rightFront");
         leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        collection = hardwareMap.get(Servo.class, "collection");
         spin = hardwareMap.get(DcMotor.class, "spin");
 //        collect = hardwareMap.get(DcMotor.class, "collect");
         imu = hardwareMap.get(BNO055IMU.class, "imu");
@@ -43,8 +46,6 @@ public class robot {
         this.hardwareMap = hardwareMap;
     }
     public void moveStraight(double inches, double speed, double direction){
-        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         while ((double)rightFront.getCurrentPosition() * direction/TICKS_TO_INCH_FORWARD <= inches){
             leftFront.setPower(direction * speed);
             leftBack.setPower(direction* speed);
@@ -57,20 +58,24 @@ public class robot {
         leftBack.setPower(0);
         rightFront.setPower(0);
         rightBack.setPower(0);
-
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
     public void strafe(double inches, int direction, double speed){
-            while ((double)rightFront.getCurrentPosition() / TICKS_TO_INCH_STRAFE <= (double)inches){
+            while ((double)rightFront.getCurrentPosition() * -direction/ TICKS_TO_INCH_STRAFE <= (double)inches){
                 leftFront.setPower(direction * speed);
                 leftBack.setPower(-direction * speed);
                 rightFront.setPower(-direction * speed);
                 rightBack.setPower(direction * speed);
                 linearOpMode.telemetry.addData("rightFront:", rightFront.getCurrentPosition());
+                linearOpMode.telemetry.update();
             }
         leftFront.setPower(0);
         leftBack.setPower(0);
         rightFront.setPower(0);
         rightBack.setPower(0);
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         //if direction is 1, strafe right, if direction is -1 strafe left
         //strafe a certain number of inches
     }
@@ -89,6 +94,8 @@ public class robot {
         leftBack.setPower(0);
         rightFront.setPower(0);
         rightBack.setPower(0);
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
     public static double angleWrap(double angle){
         while(angle>Math.PI){

@@ -37,27 +37,41 @@ public class drive extends LinearOpMode {
                 bot.rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 bot.rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             }
-            bot.leftFront.setPower(lf * ratio);
-            bot.leftBack.setPower(lb * ratio);
-            bot.rightFront.setPower(rf * ratio);
-            bot.rightBack.setPower(rb * ratio);
+            bot.leftFront.setPower(lf * ratio * 0.8);
+            bot.leftBack.setPower(lb * ratio * 0.8);
+            bot.rightFront.setPower(rf * ratio * 0.8);
+            bot.rightBack.setPower(rb * ratio * 0.8);
             telemetry.addData("heading", bot.imu.getAngularOrientation().firstAngle);
             telemetry.addData("leftFront:", bot.rightBack.getPower());
             telemetry.addData("leftSticky", gamepad1.left_stick_y);
             telemetry.addData("rightFront:",bot.rightFront.getCurrentPosition());
             telemetry.update();
 
-            if (gamepad1.left_bumper) {
+            if (gamepad2.left_bumper) {
                 bot.spin.setPower(0.6);
-            } else {
+            }
+            else {
                 bot.spin.setPower(0);
             }
 
-            if (gamepad1.right_bumper) {
+            if (gamepad2.right_bumper) {
                 bot.spin.setPower(-0.6);
             }
             else{
                 bot.spin.setPower(0);
+            }
+
+            if (gamepad2.b)
+            {
+                bot.collection.setPosition(0);
+                telemetry.addData("Collection:", 0);
+                telemetry.update();
+            }
+            else if (gamepad2.y)
+            {
+                bot.collection.setPosition(1);
+                telemetry.addData("Collection:", 1);
+                telemetry.update();
             }
 //            if (gamepad1.right_bumper) {
 //                bot.collect.setPower(0.8);
