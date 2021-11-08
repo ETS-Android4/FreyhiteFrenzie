@@ -63,14 +63,14 @@ public class drive extends LinearOpMode {
 
             if (gamepad2.b)
             {
-                bot.collection.setPosition(0);
-                telemetry.addData("Collection:", 0);
+                bot.collection.setPosition(0.4);
+                telemetry.addData("Collection:", bot.collection.getPosition());
                 telemetry.update();
             }
             else if (gamepad2.y)
             {
-                bot.collection.setPosition(1);
-                telemetry.addData("Collection:", 1);
+                bot.collection.setPosition(0.75);
+                telemetry.addData("Collection:", bot.collection.getPosition());
                 telemetry.update();
             }
 //            if (gamepad1.right_bumper) {

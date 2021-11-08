@@ -14,7 +14,7 @@ public class blueTop extends LinearOpMode {
         sleep(1000);
         bot.turnTo(Math.PI/2, 0.45);
         bot.moveStraight(50, 0.4, -1);
-        bot.spin.setPower(0.8);
+        bot.spin.setPower(0.45 * bot.direction);
         sleep(6000);
         bot.spin.setPower(0);
         bot.strafe(12, 1, 0.6);

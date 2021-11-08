@@ -12,10 +12,10 @@ public class redTop extends LinearOpMode {
         waitForStart();
         bot.init(hardwareMap, this);
         bot.strafe(39, -1, 0.45);
-        bot.spin.setPower(0.6);
+        bot.spin.setPower(0.45 * -bot.direction);
         sleep(5000);
         bot.spin.setPower(0);
-        bot.turnTo(0, 0.8);
+        bot.turnTo(0, 0.6);
         bot.rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         bot.rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         bot.moveStraight(14, 0.45, 1);

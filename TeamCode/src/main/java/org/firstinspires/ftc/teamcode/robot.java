@@ -23,6 +23,7 @@ public class robot {
     Orientation currentAngle;
     LinearOpMode linearOpMode;
     HardwareMap hardwareMap;
+    int direction;
     final static double TICKS_TO_INCH_FORWARD = 36.87;
     final static double TICKS_TO_INCH_STRAFE = 70.68;
     public void init(HardwareMap hardwareMap, LinearOpMode linearOpMode){
@@ -39,14 +40,14 @@ public class robot {
         imu.getAngularOrientation();
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-
+        direction = 1;
         imu.initialize(parameters);
         currentAngle = imu.getAngularOrientation();
         this.linearOpMode = linearOpMode;
         this.hardwareMap = hardwareMap;
     }
     public void moveStraight(double inches, double speed, double direction){
-        while ((double)rightFront.getCurrentPosition() * direction/TICKS_TO_INCH_FORWARD <= inches){
+        while ((double)Math.abs(rightFront.getCurrentPosition())/TICKS_TO_INCH_FORWARD <= inches){
             leftFront.setPower(direction * speed);
             leftBack.setPower(direction* speed);
             rightFront.setPower(direction * speed);
@@ -62,7 +63,7 @@ public class robot {
         rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
     public void strafe(double inches, int direction, double speed){
-            while ((double)rightFront.getCurrentPosition() * -direction/ TICKS_TO_INCH_STRAFE <= (double)inches){
+            while ((double)Math.abs(rightFront.getCurrentPosition())/ TICKS_TO_INCH_STRAFE <= (double)inches){
                 leftFront.setPower(direction * speed);
                 leftBack.setPower(-direction * speed);
                 rightFront.setPower(-direction * speed);
@@ -81,7 +82,7 @@ public class robot {
     }
     public void turnTo(double angle, double speed){
         int direction = (int)((imu.getAngularOrientation().firstAngle-angle)/Math.abs(imu.getAngularOrientation().firstAngle-angle));
-        while (angleWrap(Math.abs(angle - imu.getAngularOrientation().firstAngle)) > 0.06){
+        while (angleWrap(Math.abs(angle - imu.getAngularOrientation().firstAngle)) > 0.03){
             leftFront.setPower(direction * speed);
             leftBack.setPower(direction * speed);
             rightFront.setPower(-direction * speed);
