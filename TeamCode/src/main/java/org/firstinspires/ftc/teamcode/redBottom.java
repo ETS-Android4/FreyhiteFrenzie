@@ -6,16 +6,25 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 @Autonomous(name = "redBottom", group = "d")
 public class redBottom extends LinearOpMode {
+
     robot bot = new robot();
+
     @Override
     public void runOpMode(){
+
         waitForStart();
         bot.init(hardwareMap, this);
+
+        // position the robot next to the carousel
         bot.moveStraight(2, 1, 0.3);
         bot.strafe(14, -1, 0.25);
+
+        // spin the carousel
         bot.spin.setPower(0.4 * -bot.direction);
         sleep(5000);
         bot.spin.setPower(0);
+
+        // park the robot
         bot.rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         bot.rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         bot.moveStraight(17, 0.4, 1);
