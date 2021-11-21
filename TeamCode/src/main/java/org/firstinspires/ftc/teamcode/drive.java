@@ -11,14 +11,14 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class drive extends LinearOpMode {
 
     robot bot = new robot(); // initialize robot
-
     @Override
-    public void runOpMode(){
+    public void runOpMode() throws InterruptedException {
 
         bot.init(hardwareMap, this);
         waitForStart();
 
         double lx, rx, ly; // intialize variables for the gamepad
+        boolean in = true;
 
         while(opModeIsActive()) {
 
@@ -27,7 +27,7 @@ public class drive extends LinearOpMode {
             rx = gamepad1.right_stick_x;
             ly = -gamepad1.left_stick_y;
 
-            // arithmatic to get motor values not scaled
+            // arithmetic to get motor values - not scaled
             double lf = ly + rx + lx;
             double lb = ly + rx - lx;
             double rf = ly - rx - lx;
@@ -54,16 +54,9 @@ public class drive extends LinearOpMode {
             bot.rightFront.setPower(rf * ratio * 0.8);
             bot.rightBack.setPower(rb * ratio * 0.8);
 
-            // adds telemetry data
-            telemetry.addData("heading", bot.imu.getAngularOrientation().firstAngle);
-            telemetry.addData("leftFront:", bot.rightBack.getPower());
-            telemetry.addData("leftSticky", gamepad1.left_stick_y);
-            telemetry.addData("rightFront:",bot.rightFront.getCurrentPosition());
-            telemetry.update();
-
             // turns on the carousel motor
             if (gamepad2.left_bumper) {
-                bot.spin.setPower(0.6);
+                bot.spinCarousel(1);
             }
             else {
                 bot.spin.setPower(0);
@@ -71,25 +64,48 @@ public class drive extends LinearOpMode {
 
             // turns on the carousel motor in the other direction
             if (gamepad2.right_bumper) {
-                bot.spin.setPower(-0.6);
+                bot.spinCarousel(-1);
             }
             else{
                 bot.spin.setPower(0);
             }
 
-            // operates the servo motor
-            if (gamepad2.b)
+            //servo controls for arm
+            if(gamepad2.b)
             {
-                bot.collection.setPosition(0.4);
-                telemetry.addData("Collection:", bot.collection.getPosition());
-                telemetry.update();
+                bot.wrist.setPosition(0);
             }
-            else if (gamepad2.y)
-            {
-                bot.collection.setPosition(0.75);
-                telemetry.addData("Collection:", bot.collection.getPosition());
-                telemetry.update();
+            else if (gamepad2.y){
+                bot.wrist.setPosition(1);
             }
+            if(gamepad2.x){
+                bot.arm.setPosition(0.4);
+            }
+            else if(gamepad2.a){
+                bot.arm.setPosition(0.74);
+            }
+
+            //collection controls
+            if(gamepad2.left_trigger > 0.5){
+                bot.intake.setPower(0.8);
+            }
+            else if(gamepad2.right_trigger > 0.5){
+                bot.intake.setPower(-0.8);
+            }
+            else {
+                bot.intake.setPower(0);
+            }
+            // adds telemetry data
+            telemetry.addData("heading", bot.imu.getAngularOrientation().firstAngle);
+            telemetry.addData("heading3", bot.imu.getAngularOrientation().thirdAngle);
+            //range: front wheels off ground 0.08 to -1.5
+            //back wheels off ground 0.08 to 1.5
+            telemetry.addData("leftFront:", bot.rightBack.getPower());
+            telemetry.addData("leftSticky", gamepad1.left_stick_y);
+            telemetry.addData("wrist:", bot.wrist.getPosition());
+            telemetry.addData("rightFront:",bot.rightFront.getCurrentPosition());
+            telemetry.addData("in: ", in);
+            telemetry.update();
         }
     }
 }

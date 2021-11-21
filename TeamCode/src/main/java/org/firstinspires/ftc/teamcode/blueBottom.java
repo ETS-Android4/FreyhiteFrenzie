@@ -20,7 +20,6 @@ public class blueBottom extends LinearOpMode {
 
         bot.rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         bot.rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
         // positions the bot next to the carousel
         bot.moveStraight(2, 0.4, 1);
         sleep(1000);
@@ -28,7 +27,7 @@ public class blueBottom extends LinearOpMode {
         bot.moveStraight(15,0.25,-1);
 
         // spins the carousel motor
-        bot.spin.setPower(0.45 * bot.direction);
+        bot.spinCarousel(bot.direction);
         sleep(5000);
         bot.spin.setPower(0);
 

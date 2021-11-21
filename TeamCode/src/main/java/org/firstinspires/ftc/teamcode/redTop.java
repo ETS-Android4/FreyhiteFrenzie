@@ -19,7 +19,7 @@ public class redTop extends LinearOpMode {
         bot.strafe(39, -1, 0.45);
 
         // spin the carousel
-        bot.spin.setPower(0.45 * -bot.direction);
+        bot.spinCarousel(-bot.direction);
         sleep(5000);
         bot.spin.setPower(0);
 

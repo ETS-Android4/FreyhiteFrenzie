@@ -8,7 +8,13 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvPipeline;
+import org.openftc.easyopencv.OpenCvWebcam;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -18,11 +24,15 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class robot {
     DcMotor leftBack, leftFront, rightBack, rightFront;
     DcMotor spin;
-    Servo collection;//collect;
+    DcMotor intake;
+    //Servo collection;//collect;
+    Servo wrist;
+    Servo arm;
 
     BNO055IMU imu;
     Orientation currentAngle;
-
+    OpenCvPipeline pipeline;
+    OpenCvWebcam camera;
     LinearOpMode linearOpMode;
     HardwareMap hardwareMap;
 
@@ -40,8 +50,12 @@ public class robot {
         leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        collection = hardwareMap.get(Servo.class, "collection");
+        //collection = hardwareMap.get(Servo.class, "collection");
         spin = hardwareMap.get(DcMotor.class, "spin");
+        intake = hardwareMap.get(DcMotor.class, "intake");
+        wrist = hardwareMap.get(Servo.class, "wrist");
+        arm = hardwareMap.get(Servo.class, "arm");
+
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.getAngularOrientation();
@@ -55,7 +69,25 @@ public class robot {
         this.linearOpMode = linearOpMode;
         this.hardwareMap = hardwareMap;
     }
+    public void initOpenCV(){
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam"), cameraMonitorViewId);
+        pipeline = new barcodePipeline();
+        camera.setPipeline(pipeline);
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        {
+            @Override
+            public void onOpened()
+            {
+                camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+            }
 
+            @Override
+            public void onError(int errorCode) {
+                //does nothing just needed so "AsyncCameraOpenListener()" doesn't give error
+            }
+        });
+    }
     public void moveStraight(double inches, double speed, double direction){
         while ((double)Math.abs(rightFront.getCurrentPosition())/TICKS_TO_INCH_FORWARD <= inches){
             leftFront.setPower(direction * speed);
@@ -77,7 +109,7 @@ public class robot {
     
     //if direction is 1, strafe right, if direction is -1 strafe left
     public void strafe(double inches, int direction, double speed){
-        while ((double)Math.abs(rightFront.getCurrentPosition())/ TICKS_TO_INCH_STRAFE <= (double)inches){                
+        while (((double)(Math.abs(rightFront.getCurrentPosition()))/ TICKS_TO_INCH_STRAFE) <= inches){
             leftFront.setPower(direction * speed);
             leftBack.setPower(-direction * speed);
             rightFront.setPower(-direction * speed);
@@ -115,6 +147,10 @@ public class robot {
         rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
+    public void spinCarousel(int direction){
+        //-1 means spin left, 1 means spin right
+        spin.setPower(direction * 0.5);
+    }
     public static double angleWrap(double angle){
         while(angle>Math.PI){
             angle-=2*Math.PI;

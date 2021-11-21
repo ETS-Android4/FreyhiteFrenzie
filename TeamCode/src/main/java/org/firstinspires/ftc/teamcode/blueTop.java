@@ -21,7 +21,7 @@ public class blueTop extends LinearOpMode {
         bot.moveStraight(50, 0.4, -1);
 
         // spins the carousel motor
-        bot.spin.setPower(0.45 * bot.direction);
+        bot.spinCarousel(bot.direction);
         sleep(6000);
         bot.spin.setPower(0);
 

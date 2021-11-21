@@ -20,7 +20,7 @@ public class redBottom extends LinearOpMode {
         bot.strafe(14, -1, 0.25);
 
         // spin the carousel
-        bot.spin.setPower(0.4 * -bot.direction);
+        bot.spinCarousel(-bot.direction);
         sleep(5000);
         bot.spin.setPower(0);
 
