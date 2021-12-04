@@ -70,8 +70,8 @@ public class robot {
         this.hardwareMap = hardwareMap;
     }
     public void initOpenCV(){
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam"), cameraMonitorViewId);
+       // int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam"));//, cameraMonitorViewId);
         pipeline = new barcodePipeline();
         camera.setPipeline(pipeline);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
@@ -160,4 +160,17 @@ public class robot {
         }
         return angle;
     }
+    public void armTo3(){
+        arm.setPosition(1);
+    }
+    public void armTo2(){
+        arm.setPosition(1);
+    }
+    public void armTo1(){
+        arm.setPosition(1);
+    }
+    public void wristDrop(){
+        wrist.setPosition(1);
+    }
+
 }

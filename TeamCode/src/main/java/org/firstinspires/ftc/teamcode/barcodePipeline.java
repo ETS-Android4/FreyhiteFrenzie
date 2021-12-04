@@ -13,6 +13,11 @@ public class barcodePipeline extends OpenCvPipeline {
     int pos = 0;
     @Override
     public Mat processFrame(Mat input){
+        pos = 10;
+
         return input;
+    }
+    public int getOrder(){
+        return pos;
     }
 }

@@ -19,7 +19,10 @@ public class drive extends LinearOpMode {
 
         double lx, rx, ly; // intialize variables for the gamepad
         boolean in = true;
-
+        boolean wristExt = false;
+        boolean wristExtLate = false;
+        boolean armExt = false;
+        boolean armExtLate = false;
         while(opModeIsActive()) {
 
             // set the gamepad variables
@@ -71,19 +74,35 @@ public class drive extends LinearOpMode {
             }
 
             //servo controls for arm
-            if(gamepad2.b)
+            if(!gamepad2.b && wristExtLate)
             {
-                bot.wrist.setPosition(0);
+                if(wristExt)
+                {
+                    bot.wrist.setPosition(0);
+                    wristExt = false;
+                }
+                else{
+                    bot.wrist.setPosition(1);
+                    wristExt = true;
+                }
             }
-            else if (gamepad2.y){
-                bot.wrist.setPosition(1);
+            if(!gamepad2.x && armExtLate)
+            {
+                if(armExt)
+                {
+                    bot.arm.setPosition(0.4);
+                    armExt = false;
+                }
+                else
+                {
+                    bot.arm.setPosition(0.74);
+                    armExt = true;
+                }
             }
-            if(gamepad2.x){
-                bot.arm.setPosition(0.4);
-            }
-            else if(gamepad2.a){
-                bot.arm.setPosition(0.74);
-            }
+
+            //put values for late booleans
+            wristExtLate = gamepad2.b;
+            armExtLate = gamepad2.x;
 
             //collection controls
             if(gamepad2.left_trigger > 0.5){
@@ -103,6 +122,7 @@ public class drive extends LinearOpMode {
             telemetry.addData("leftFront:", bot.rightBack.getPower());
             telemetry.addData("leftSticky", gamepad1.left_stick_y);
             telemetry.addData("wrist:", bot.wrist.getPosition());
+            telemetry.addData("arm: ", bot.arm.getPosition());
             telemetry.addData("rightFront:",bot.rightFront.getCurrentPosition());
             telemetry.addData("in: ", in);
             telemetry.update();

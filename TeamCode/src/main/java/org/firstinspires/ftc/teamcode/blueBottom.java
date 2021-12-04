@@ -14,10 +14,9 @@ public class blueBottom extends LinearOpMode {
 
     @Override
     public void runOpMode(){
-
+        bot.initOpenCV();
         waitForStart();
         bot.init(hardwareMap, this);
-
         bot.rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         bot.rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         // positions the bot next to the carousel
@@ -25,7 +24,6 @@ public class blueBottom extends LinearOpMode {
         sleep(1000);
         turnTo(Math.PI/2, 0.35);
         bot.moveStraight(15,0.25,-1);
-
         // spins the carousel motor
         bot.spinCarousel(bot.direction);
         sleep(5000);
