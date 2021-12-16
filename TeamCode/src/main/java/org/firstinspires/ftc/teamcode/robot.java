@@ -13,6 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvInternalCamera;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
@@ -32,9 +33,10 @@ public class robot {
     BNO055IMU imu;
     Orientation currentAngle;
     OpenCvPipeline pipeline;
-    OpenCvWebcam camera;
+    OpenCvCamera camera;
     LinearOpMode linearOpMode;
     HardwareMap hardwareMap;
+    WebcamName webcamName;
 
     int direction;
 
@@ -70,8 +72,11 @@ public class robot {
         this.hardwareMap = hardwareMap;
     }
     public void initOpenCV(){
-       // int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam"));//, cameraMonitorViewId);
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        //camera = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.FRONT, cameraMonitorViewId);
+        webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
+        camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
+        //camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam"));//, cameraMonitorViewId);
         pipeline = new barcodePipeline();
         camera.setPipeline(pipeline);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
@@ -80,11 +85,14 @@ public class robot {
             public void onOpened()
             {
                 camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                // Usually this is where you'll want to start streaming from the camera (see section 4)
             }
-
             @Override
-            public void onError(int errorCode) {
-                //does nothing just needed so "AsyncCameraOpenListener()" doesn't give error
+            public void onError(int errorCode)
+            {
+                /*
+                 * This will be called if the camera could not be opened
+                 */
             }
         });
     }
@@ -160,17 +168,53 @@ public class robot {
         }
         return angle;
     }
-    public void armTo3(){
-        arm.setPosition(1);
+
+    public void moveTwoMotors(double targetPositionArm, double targetPositionWrist, double inc){
+        double startArm = arm.getPosition();
+        double startWrist = wrist.getPosition();
+
+        double loopRepititions = Math.abs(targetPositionArm - startArm)/inc;
+        double wristInc = (targetPositionWrist - startWrist)/loopRepititions;
+
+        for (int i= 0; i < loopRepititions; i++){
+            arm.setPosition(startArm - (i * inc));
+            wrist.setPosition(startWrist - (i * wristInc));
+        }
+
+        arm.setPosition(targetPositionArm);
+        wrist.setPosition(targetPositionWrist);
     }
+
+    public void armTo3(){
+        moveTwoMotors(0.65, 0.28, 0.02);
+//        for (int i = 0; i < 10; i++){
+//            arm.setPosition(0.95 - (i *0.02));
+//            wrist.setPosition(0.42 - (i * 0.02));
+//        }
+        arm.setPosition(0.3);
+    }
+
+
     public void armTo2(){
         arm.setPosition(1);
     }
     public void armTo1(){
         arm.setPosition(1);
     }
-    public void wristDrop(){
+    public void armReset() throws InterruptedException {
+//        moveTwoMotors(0.65, 0.28, 0.02);
+        moveTwoMotors(0.86, 0.36, 0.02);
+        Thread.sleep(1500);
+        wrist.setPosition(0.42);
+    }
+    public void wristDrop2(){
         wrist.setPosition(1);
+    }
+    public void wristDrop1(){
+        wrist.setPosition(0.5);
+    }
+    public void wristReset(){
+        wrist.setPosition(0.42);
     }
 
 }

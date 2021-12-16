@@ -11,6 +11,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import org.opencv.core.MatOfPoint;
 public class barcodePipeline extends OpenCvPipeline {
     int pos = 0;
+    
     @Override
     public Mat processFrame(Mat input){
         pos = 10;

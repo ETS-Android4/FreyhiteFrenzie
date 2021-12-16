@@ -19,10 +19,13 @@ public class drive extends LinearOpMode {
 
         double lx, rx, ly; // intialize variables for the gamepad
         boolean in = true;
-        boolean wristExt = false;
+        byte wristExt = 0; //0 fully ext, 1 half ext, 2 fully ext
         boolean wristExtLate = false;
         boolean armExt = false;
-        boolean armExtLate = false;
+        boolean armExtLate1 = false;
+        boolean armExtLate2 = false;
+        boolean armExtLate3 = false;
+
         while(opModeIsActive()) {
 
             // set the gamepad variables
@@ -61,12 +64,7 @@ public class drive extends LinearOpMode {
             if (gamepad2.left_bumper) {
                 bot.spinCarousel(1);
             }
-            else {
-                bot.spin.setPower(0);
-            }
-
-            // turns on the carousel motor in the other direction
-            if (gamepad2.right_bumper) {
+            else if (gamepad2.right_bumper){
                 bot.spinCarousel(-1);
             }
             else{
@@ -74,35 +72,76 @@ public class drive extends LinearOpMode {
             }
 
             //servo controls for arm
-            if(!gamepad2.b && wristExtLate)
+            //wrist:
+            if(gamepad2.b && !wristExtLate)
             {
-                if(wristExt)
+                if(wristExt == 2)
                 {
-                    bot.wrist.setPosition(0);
-                    wristExt = false;
+                    bot.wristReset();
+                    wristExt = 0;
+                }
+                else if(wristExt == 1)
+                {
+                    bot.wristDrop2();
+                    wristExt = 2;
                 }
                 else{
-                    bot.wrist.setPosition(1);
-                    wristExt = true;
+                    bot.wristDrop1();
+                    wristExt = 1;
                 }
             }
-            if(!gamepad2.x && armExtLate)
+
+            //top tier
+            if(gamepad2.y && !armExtLate3)
             {
                 if(armExt)
                 {
-                    bot.arm.setPosition(0.4);
+                    //0.4
+                    bot.armReset();
                     armExt = false;
                 }
                 else
                 {
-                    bot.arm.setPosition(0.74);
+                    //0.74
+                    bot.armTo3();
+
+                    armExt = true;
+                }
+            }
+            //mid tier
+            if(!gamepad2.x && armExtLate2)
+            {
+                if(armExt)
+                {
+                    bot.armReset();
+                    armExt = false;
+                }
+                else
+                {
+                    bot.armTo2();
+                    armExt = true;
+                }
+            }
+            //bottom tier
+            if(!gamepad2.a && armExtLate1)
+            {
+                if(armExt)
+                {
+                    bot.armReset();
+                    armExt = false;
+                }
+                else
+                {
+                    bot.armTo1();
                     armExt = true;
                 }
             }
 
             //put values for late booleans
             wristExtLate = gamepad2.b;
-            armExtLate = gamepad2.x;
+            armExtLate1 = gamepad2.a;
+            armExtLate2 = gamepad2.x;
+            armExtLate3 = gamepad2.y;
 
             //collection controls
             if(gamepad2.left_trigger > 0.5){
@@ -117,6 +156,7 @@ public class drive extends LinearOpMode {
             // adds telemetry data
             telemetry.addData("heading", bot.imu.getAngularOrientation().firstAngle);
             telemetry.addData("heading3", bot.imu.getAngularOrientation().thirdAngle);
+            telemetry.addData("carousel", bot.spin.getPower());
             //range: front wheels off ground 0.08 to -1.5
             //back wheels off ground 0.08 to 1.5
             telemetry.addData("leftFront:", bot.rightBack.getPower());
