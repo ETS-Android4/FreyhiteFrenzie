@@ -74,7 +74,7 @@ public class robot {
     public void initOpenCV(){
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         //camera = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.FRONT, cameraMonitorViewId);
-        webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
+        //webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
         //camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam"));//, cameraMonitorViewId);
         pipeline = new barcodePipeline();
@@ -97,13 +97,13 @@ public class robot {
         });
     }
     public void moveStraight(double inches, double speed, double direction){
-        while ((double)Math.abs(rightFront.getCurrentPosition())/TICKS_TO_INCH_FORWARD <= inches){
+        while ((double)Math.abs(leftFront.getCurrentPosition())/TICKS_TO_INCH_FORWARD <= inches){
             leftFront.setPower(direction * speed);
             leftBack.setPower(direction * speed);
             rightFront.setPower(direction * speed);
             rightBack.setPower(direction * speed);
 
-            linearOpMode.telemetry.addData("rightFront:",rightFront.getCurrentPosition());
+            linearOpMode.telemetry.addData("leftFront:",leftFront.getCurrentPosition());
             linearOpMode.telemetry.update();
         }
 
@@ -111,13 +111,13 @@ public class robot {
         leftBack.setPower(0);
         rightFront.setPower(0);
         rightBack.setPower(0);
-        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
     
     //if direction is 1, strafe right, if direction is -1 strafe left
     public void strafe(double inches, int direction, double speed){
-        while (((double)(Math.abs(rightFront.getCurrentPosition()))/ TICKS_TO_INCH_STRAFE) <= inches){
+        while (((double)(Math.abs(leftFront.getCurrentPosition()))/ TICKS_TO_INCH_STRAFE) <= inches){
             leftFront.setPower(direction * speed);
             leftBack.setPower(-direction * speed);
             rightFront.setPower(-direction * speed);
@@ -131,8 +131,8 @@ public class robot {
         leftBack.setPower(0);
         rightFront.setPower(0);
         rightBack.setPower(0);
-        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     // doesn't work scuffed angle unless we use sleep
@@ -151,13 +151,13 @@ public class robot {
         leftBack.setPower(0);
         rightFront.setPower(0);
         rightBack.setPower(0);
-        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public void spinCarousel(int direction){
         //-1 means spin left, 1 means spin right
-        spin.setPower(direction * 0.5);
+        spin.setPower(direction * 0.38);
     }
     public static double angleWrap(double angle){
         while(angle>Math.PI){
@@ -169,6 +169,7 @@ public class robot {
         return angle;
     }
 
+    //Moves the Arm and Wrist in sync at a given ratio depending on their position
     public void moveTwoMotors(double targetPositionArm, double targetPositionWrist, double inc){
         double startArm = arm.getPosition();
         double startWrist = wrist.getPosition();
@@ -185,33 +186,38 @@ public class robot {
         wrist.setPosition(targetPositionWrist);
     }
 
-    public void armTo3(){
-        moveTwoMotors(0.65, 0.28, 0.02);
-//        for (int i = 0; i < 10; i++){
-//            arm.setPosition(0.95 - (i *0.02));
-//            wrist.setPosition(0.42 - (i * 0.02));
-//        }
-        arm.setPosition(0.3);
-    }
+    // sets arm position to 3 (top layer of shipping hub)
+//    public void armTo3(){
+//        moveTwoMotors(0.5, 0.28, 0.02); //targetPositionArm was originally 0.65
+////        for (int i = 0; i < 10; i++){
+////            arm.setPosition(0.95 - (i *0.02));
+////            wrist.setPosition(0.42 - (i * 0.02));
+////        }
+//        arm.setPosition(0.18);
+//    }
 
-
+    //sets arm position to 2 (middle layer of shipping hub)
     public void armTo2(){
-        arm.setPosition(1);
+        moveTwoMotors(0.5, 0.28, 0.02);  //change later (test values)
+        arm.setPosition(0); //might change later (test values)
     }
+    //sets arm position to 1 (bottom layer of shipping hub)
     public void armTo1(){
-        arm.setPosition(1);
+        moveTwoMotors(0.5, 0.28, 0.02); //might change later (test values)
+        arm.setPosition(0.18); //might change later (test values)
     }
+    //resets the arm to the bottom, using moveTwoMotors to flatten the wrist so that it fits
     public void armReset() throws InterruptedException {
 //        moveTwoMotors(0.65, 0.28, 0.02);
-        moveTwoMotors(0.86, 0.36, 0.02);
-        Thread.sleep(1500);
+        moveTwoMotors(0.86, 0.34, 0.02);
+        Thread.sleep(1000);
         wrist.setPosition(0.42);
     }
     public void wristDrop2(){
         wrist.setPosition(1);
     }
     public void wristDrop1(){
-        wrist.setPosition(0.5);
+        wrist.setPosition(0.28);
     }
     public void wristReset(){
         wrist.setPosition(0.42);

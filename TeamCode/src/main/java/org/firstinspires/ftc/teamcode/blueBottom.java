@@ -14,11 +14,11 @@ public class blueBottom extends LinearOpMode {
 
     @Override
     public void runOpMode(){
-        bot.initOpenCV();
-        waitForStart();
+//        bot.initOpenCV();
         bot.init(hardwareMap, this);
-        bot.rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        bot.rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        waitForStart();
+        bot.leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        bot.leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         // positions the bot next to the carousel
         bot.moveStraight(2, 0.4, 1);
         sleep(1000);
@@ -30,8 +30,8 @@ public class blueBottom extends LinearOpMode {
         bot.spin.setPower(0);
 
         // parks the robot
-        bot.rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        bot.rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        bot.leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        bot.leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         bot.strafe(10, 1, 0.3);
         bot.moveStraight(4,.3,-1);
 
@@ -52,8 +52,8 @@ public class blueBottom extends LinearOpMode {
         bot.leftBack.setPower(0);
         bot.rightFront.setPower(0);
         bot.rightBack.setPower(0);
-        bot.rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        bot.rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        bot.leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        bot.leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
 }

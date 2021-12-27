@@ -15,19 +15,19 @@ public class redBottomArm extends LinearOpMode {
 
         waitForStart();
         bot.init(hardwareMap, this);
-        bot.rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        bot.rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        bot.leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        bot.leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         bot.init(hardwareMap, this);
 
-        bot.strafe(24,-1, 0.4);
-        bot.moveStraight(10, 0.5, -1);
+        bot.strafe(18,-1, 0.4);
+        bot.moveStraight(17, 0.5, -1);
 
         //insertOpenCV stuff here!
 
         //read the barcode and set to int barcode
-
+        barcode = 3;
         if (barcode == 3) {
-            bot.armTo3();
+            bot.armTo1();
         }
         else if (barcode == 2) {
             bot.armTo2();
@@ -35,25 +35,34 @@ public class redBottomArm extends LinearOpMode {
         else {
             bot.armTo1();
         }
-        //bot.wristDrop();
+        sleep(2000);
+        bot.wristDrop2();
+        sleep(1000);
         bot.armReset();
+        bot.leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        bot.leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //move back
-        bot.moveStraight(10, 0.5, 1);
+        bot.moveStraight(16, 0.5, 1);
+        bot.strafe(40, 1, 0.4);
 
         // positions the bot next to the carousel
-        bot.moveStraight(2, 0.5, -1);
-        bot.turnTo(Math.PI, 0.45);
-        bot.strafe(14, -1, 0.25);
-
+        sleep(500);
+        bot.turnTo(Math.PI, 0.5);
+        sleep(1000);
+        //bot.turnTo(Math.PI - 0.1, 0.45);
+        bot.leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        bot.leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //bot.strafe(6, -1, 0.3);
+        sleep(1000);
         // spin the carousel
         bot.spinCarousel(-bot.direction);
         sleep(5000);
         bot.spin.setPower(0);
 
         // parks the robot
-        bot.strafe(12, 1, 0.6);
-        bot.moveStraight(6, 0.3, 1);
+        bot.moveStraight(7, 0.6, 1);
+        bot.strafe(14, -1, 0.4);
 
     }
 }
