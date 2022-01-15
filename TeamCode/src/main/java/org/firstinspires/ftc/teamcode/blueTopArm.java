@@ -4,21 +4,22 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.openftc.easyopencv.OpenCvWebcam;
+
 @Autonomous(name = "blueTopArm", group = "f")
 public class blueTopArm extends LinearOpMode {
 
     robot bot = new robot();
     int barcode;
+    OpenCvWebcam webcam;
 
     @Override
     public void runOpMode() throws InterruptedException {
-
-
         bot.init(hardwareMap, this);
+        bot.OpenCV(webcam);
+        waitForStart();
         bot.leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         bot.leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //bot.initOpenCV();
-        waitForStart();
         bot.strafe(10,-1, 0.4);
         bot.moveStraight(20, 0.5, -1);
 
@@ -26,17 +27,17 @@ public class blueTopArm extends LinearOpMode {
 
         //read the barcode and set to int barcode
         barcode = 3;
-        if (barcode == 3) {
-            bot.armTo1();
+        if (barcode == 1) {
+            bot.armToTop();
         }
         else if (barcode == 2) {
-            bot.armTo2();
+            bot.armToMiddle();
         }
-        else {
-            bot.armTo1();
+        else if (barcode == 3){
+            bot.armToBottom();
         }
         sleep(2000);
-        bot.wristDrop2();
+        bot.wristDrop();
         sleep(1000);
         bot.armReset();
         bot.leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

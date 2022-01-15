@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 //keshav says hi
+//smh keshav
 
 @TeleOp (name = "drive", group = "sus")
 public class drive extends LinearOpMode {
@@ -24,6 +25,7 @@ public class drive extends LinearOpMode {
         boolean wristExtLate = false;
         boolean armExtLate1 = false;
         boolean armExtLate2 = false;
+        boolean armExtLate3 = false;
 
         while(opModeIsActive()) {
 
@@ -74,25 +76,24 @@ public class drive extends LinearOpMode {
             //wrist:
             if(gamepad2.a && !wristExtLate)
             {
-                if(wristExt == 2)
+                if(wristExt == 1)
                 {
                     bot.wristReset();
                     wristExt = 0;
                 }
-                else if(wristExt == 1)
+                else if(wristExt == 0)
                 {
-                    bot.wristDrop2();
-                    wristExt = 2;
-                }
-                else{
-                    bot.wristDrop1();
+                    bot.wristDrop();
                     wristExt = 1;
                 }
             }
 
+            telemetry.addData("Wrist Extension: ", wristExt);
+
             //arm:
             if(gamepad2.y && !armExtLate1)
             {
+                wristExt = 0;
                 if(armExt != 0)
                 {
                     bot.armReset();
@@ -100,12 +101,13 @@ public class drive extends LinearOpMode {
                 }
                 else if(armExt == 0)
                 {
-                    bot.armTo1();
+                    bot.armToTop();
                     armExt = 1;
                 }
             }
             if(gamepad2.x && !armExtLate2)
             {
+                wristExt = 0;
                 if(armExt != 0)
                 {
                     bot.armReset();
@@ -113,16 +115,30 @@ public class drive extends LinearOpMode {
                 }
                 else if(armExt == 0)
                 {
-                    bot.armTo2();
+                    bot.armToMiddle();
                     armExt = 2;
                 }
             }
-
+            if(gamepad2.b && !armExtLate3)
+            {
+                wristExt = 0;
+                if(armExt != 0)
+                {
+                    bot.armReset();
+                    armExt = 0;
+                }
+                else if(armExt == 0)
+                {
+                    bot.armToBottom();
+                    armExt = 3;
+                }
+            }
 
             //put values for late booleans
             wristExtLate = gamepad2.a;
             armExtLate1 = gamepad2.y;
             armExtLate2 = gamepad2.x;
+            armExtLate3 = gamepad2.b;
 
             //collection controls
             if(gamepad2.left_trigger > 0.5){
