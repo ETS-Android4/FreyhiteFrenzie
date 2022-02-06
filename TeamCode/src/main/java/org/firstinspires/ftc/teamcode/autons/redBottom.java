@@ -1,32 +1,32 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.autons;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.teamcode.robot;
+
 @Autonomous(name = "redBottom", group = "d")
 public class redBottom extends LinearOpMode {
 
-    robot bot = new robot();
 
     @Override
     public void runOpMode(){
+    robot bot = new robot(hardwareMap, this);
 
         waitForStart();
-        bot.init(hardwareMap, this);
 
         // position the robot next to the carousel
         bot.moveStraight(2, 1, 0.3);
         bot.strafe(14, -1, 0.25);
 
         // spin the carousel
-        bot.spinCarousel(-bot.direction);
+        bot.spinCarousel(-bot.DIRECTION);
         sleep(5000);
-        bot.spin.setPower(0);
+        bot.spinCarousel(0);
 
         // park the robot
-        bot.rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        bot.rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        bot.resetEncoders();
         bot.moveStraight(17, 0.4, 1);
         bot.strafe(8,-1,0.3);
 

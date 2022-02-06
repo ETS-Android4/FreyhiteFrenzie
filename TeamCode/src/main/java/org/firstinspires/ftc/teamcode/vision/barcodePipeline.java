@@ -1,4 +1,5 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.vision;
+import org.firstinspires.ftc.teamcode.robot;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 
@@ -15,7 +16,7 @@ import java.util.List;
 
 public class barcodePipeline extends OpenCvPipeline {
     int pos = 0;
-    Rect crosshair = new Rect(new Point(150, 150), new Point(200,200));
+    //Rect crosshair = new Rect(new Point(150, 150), new Point(200,200));
     int c1 = 0;
     int c2 = 0;
     int c3 = 0;
@@ -25,9 +26,12 @@ public class barcodePipeline extends OpenCvPipeline {
         pos = 10;
         Size imageSize = input.size();
         Mat output = input.clone();
-        Imgproc.rectangle(output, crosshair, new Scalar(4, 233, 78), 3, 8);
+        //Imgproc.rectangle(output, crosshair, new Scalar(4, 233, 78), 3, 8);
         Rect crosshair1 = new Rect(new Point(0, imageSize.height/2), new Point(imageSize.width, imageSize.height - 50));
         Imgproc.rectangle(output, crosshair1, new Scalar(4, 233, 78), 3, 8);
+
+        Imgproc.line(output, new Point(imageSize.width/3, imageSize.height/2), new Point(imageSize.width/3, imageSize.height-50), new Scalar(4, 233, 78), 5);
+        Imgproc.line(output, new Point(imageSize.width * 2.0/3, imageSize.height/2), new Point(imageSize.width * 2.0/3, imageSize.height-50), new Scalar(4, 233, 78), 5);
 
         List<MatOfPoint> matList = new ArrayList<>();
 
@@ -38,7 +42,7 @@ public class barcodePipeline extends OpenCvPipeline {
             for(int j = 0; j < imageSize.width; j++)
             {
                 double[] pixelColor = input.get(i, j);
-                if (pixelColor[0] > 160 && pixelColor[1] < 100 && pixelColor[2] < 50){
+                if (pixelColor[0] > 180 && pixelColor[1] > 100 && pixelColor[2] < 125){
                     if (j <= imageSize.width/3){
                         c1++;
                     }

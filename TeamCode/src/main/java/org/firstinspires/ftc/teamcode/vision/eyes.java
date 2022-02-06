@@ -1,9 +1,10 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.vision;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.robot;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -11,12 +12,11 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 @Autonomous (name = "eyes", group = "z")
 public class eyes extends LinearOpMode {
-    robot bot = new robot();
     OpenCvWebcam webcam;
     @Override
     public void runOpMode() throws InterruptedException{
-        bot.init(hardwareMap, this);
-        bot.OpenCV(webcam);
+        robot bot = new robot(hardwareMap, this);
+        bot.initOpenCV(webcam);
 //        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 //        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
 //        webcam.setPipeline(new barcodePipeline());

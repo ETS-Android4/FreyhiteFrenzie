@@ -1,18 +1,19 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.autons;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.robot;
+
 @Autonomous(name = "blueTop", group = "f")
 public class blueTop extends LinearOpMode {
 
-    robot bot = new robot();
 
     @Override
     public void runOpMode(){
+    robot bot = new robot(hardwareMap, this);
 
         waitForStart();
-        bot.init(hardwareMap, this);
 
         // positions the bot next to the carousel
         bot.moveStraight(5, 0.4, 1);
@@ -21,9 +22,9 @@ public class blueTop extends LinearOpMode {
         bot.moveStraight(50, 0.4, -1);
 
         // spins the carousel motor
-        bot.spinCarousel(bot.direction);
+        bot.spinCarousel(bot.DIRECTION);
         sleep(6000);
-        bot.spin.setPower(0);
+        bot.spinCarousel(0);
 
         // parks the robot
         bot.strafe(12, 1, 0.6);

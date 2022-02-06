@@ -5,17 +5,14 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-//keshav says hi
-//smh keshav
 
-@TeleOp (name = "drive", group = "sus")
+@TeleOp (name = "TrulyIntelligentTeleopSoftware", group = "sus")
 public class drive extends LinearOpMode {
 
-    robot bot = new robot(); // initialize robot
+     // initialize robot
     @Override
     public void runOpMode() throws InterruptedException {
-
-        bot.init(hardwareMap, this);
+        robot bot = new robot(hardwareMap, this);
         waitForStart();
 
         double lx, rx, ly; // intialize variables for the gamepad
@@ -26,20 +23,20 @@ public class drive extends LinearOpMode {
         boolean armExtLate1 = false;
         boolean armExtLate2 = false;
         boolean armExtLate3 = false;
-
+        boolean slowModeLate = false;
+        double slowMode = 1.0;
+        boolean slow = false;
         while(opModeIsActive()) {
 
             // set the gamepad variables
             lx = gamepad1.left_stick_x;
             rx = gamepad1.right_stick_x;
             ly = -gamepad1.left_stick_y;
-
             // arithmetic to get motor values - not scaled
             double lf = ly + rx + lx;
             double lb = ly + rx - lx;
             double rf = ly - rx - lx;
             double rb = ly - rx + lx;
-
             // scale the motor values
             double ratio;
             double max = Math.max(Math.max(Math.abs(lb), Math.abs(lf)), Math.max(Math.abs(rb), Math.abs(rf)));
@@ -49,17 +46,20 @@ public class drive extends LinearOpMode {
                 ratio = 0;
             }
 
+            // sets the motor power
+            bot.leftFront.setPower(lf * ratio * 0.8 * slowMode);
+            bot.leftBack.setPower(lb * ratio * 0.8 * slowMode);
+            bot.rightFront.setPower(rf * ratio * 0.8 * slowMode);
+            bot.rightBack.setPower(rb * ratio * 0.8 * slowMode);
             // reset leftFront encoder
             if (gamepad1.a){
                 bot.leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 bot.leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             }
 
-            // sets the motor power
-            bot.leftFront.setPower(lf * ratio * 0.8);
-            bot.leftBack.setPower(lb * ratio * 0.8);
-            bot.rightFront.setPower(rf * ratio * 0.8);
-            bot.rightBack.setPower(rb * ratio * 0.8);
+            // motor powers are slowed
+
+
 
             // turns on the carousel motor
             if (gamepad2.left_bumper) {
@@ -70,6 +70,16 @@ public class drive extends LinearOpMode {
             }
             else{
                 bot.spin.setPower(0);
+            }
+            if (gamepad1.y && !slowModeLate) {
+                if (!slow) {
+                    slowMode = 0.5;
+                    slow = true;
+                }
+                else{
+                    slowMode = 1.0;
+                    slow = false;
+                }
             }
 
             //servo controls for arm
@@ -139,6 +149,7 @@ public class drive extends LinearOpMode {
             armExtLate1 = gamepad2.y;
             armExtLate2 = gamepad2.x;
             armExtLate3 = gamepad2.b;
+            slowModeLate = gamepad1.y;
 
             //collection controls
             if(gamepad2.left_trigger > 0.5){
@@ -158,11 +169,25 @@ public class drive extends LinearOpMode {
 
             //back wheels off ground 0.08 to 1.5
             //telemetry.addData("carousel", bot.spin.getPower());
-            telemetry.addData("leftFront:", bot.rightBack.getPower());
+            //telemetry.addData("leftFront:", bot.rightBack.getPower());
+//            telemetry.addData("lf",lf);
+//            telemetry.addData("rf", rf);
+//            telemetry.addData("lb", lb);
+//            telemetry.addData("rb",rb);
+            for (int i = 0; i<robot.encoderMotors.length; i++)
+            {
+                telemetry.addData("encodermotors" + i + ": ", robot.encoderMotors[i].getCurrentPosition());
+            }
+            telemetry.addData("Average Encoder Motors: ", Util.getAverageEncoderPosition(robot.encoderMotors));
+            telemetry.addData("rightFront:", bot.rightFront.getCurrentPosition());
             //telemetry.addData("leftSticky", gamepad1.left_stick_y);
             telemetry.addData("wrist: ", bot.wrist.getPosition());
             telemetry.addData("arm: ", bot.arm.getPosition());
             telemetry.addData("leftFront: ", bot.leftFront.getCurrentPosition());
+            telemetry.addData("lf", bot.leftFront.getPortNumber());
+            telemetry.addData("lb", bot.leftBack.getPortNumber());
+            telemetry.addData("rf", bot.rightFront.getPortNumber());
+            telemetry.addData("rb", bot.rightBack.getPortNumber());
             //telemetry.addData("in: ", in);
             telemetry.update();
         }
