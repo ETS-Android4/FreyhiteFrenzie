@@ -64,15 +64,15 @@ public class barcodePipeline extends OpenCvPipeline {
 
         if(c1 >= c2 && c1 >= c3)
         {
-            robot.barcode = 1;
+            robot.barcode = 2;
         }
         else if(c2 >= c1 && c2 >= c3)
         {
-            robot.barcode = 2;
+            robot.barcode = 1;
         }
         else if(c3 >= c1 && c3 >= c2)
         {
-            robot.barcode = 3;
+            robot.barcode = 0;
         }
 
         return output;

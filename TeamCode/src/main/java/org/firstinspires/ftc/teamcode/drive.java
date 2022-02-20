@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -51,11 +52,6 @@ public class drive extends LinearOpMode {
             bot.leftBack.setPower(lb * ratio * 0.8 * slowMode);
             bot.rightFront.setPower(rf * ratio * 0.8 * slowMode);
             bot.rightBack.setPower(rb * ratio * 0.8 * slowMode);
-            // reset leftFront encoder
-            if (gamepad1.a){
-                bot.leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                bot.leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            }
 
             // motor powers are slowed
 
@@ -162,11 +158,23 @@ public class drive extends LinearOpMode {
                 bot.intake.setPower(0);
             }
 
+            if (gamepad2.dpad_down) {
+                bot.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
+            }
+            else if (gamepad2.dpad_up){
+                bot.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE);
+            }
             // adds telemetry data
             telemetry.addData("heading", bot.imu.getAngularOrientation().firstAngle);
             telemetry.addData("heading3", bot.imu.getAngularOrientation().thirdAngle);
+            double angle = bot.imu.getAngularOrientation().thirdAngle;
+            if (angle > 0.2 || angle < -0.2){
+                bot.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE);
+            }
+            else {
+                bot.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+            }
             //range: front wheels off ground 0.08 to -1.5
-
             //back wheels off ground 0.08 to 1.5
             //telemetry.addData("carousel", bot.spin.getPower());
             //telemetry.addData("leftFront:", bot.rightBack.getPower());

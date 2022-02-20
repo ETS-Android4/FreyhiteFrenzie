@@ -19,6 +19,7 @@ import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityCons
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -63,11 +64,11 @@ import java.util.List;
 @Config
 public class robot extends MecanumDrive {
 
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(2, 1, 0.5);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(9, 0, 0.4);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(7, 0, 0.3);
 
     public boolean RUN_USING_ENCODER;
-    public static double LATERAL_MULTIPLIER = 1;
+    public static double LATERAL_MULTIPLIER = 60/43.2;
 
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;
@@ -86,6 +87,7 @@ public class robot extends MecanumDrive {
     private VoltageSensor batteryVoltageSensor;
 
     BNO055IMU imu;
+    RevBlinkinLedDriver blinkinLedDriver;
     Orientation currentAngle;
     public static int barcode;
 
@@ -96,7 +98,7 @@ public class robot extends MecanumDrive {
 
     public final int DIRECTION = 1;
     final private double CAROUSEL_SPEED = 0.46;
-    final static double TICKS_TO_INCH_FORWARD = 36.87;
+    final static double TICKS_TO_INCH_FORWARD = 37.87;
     final static double TICKS_TO_INCH_STRAFE = 70.68;
     static DcMotor[] encoderMotors;
 
@@ -121,6 +123,7 @@ public class robot extends MecanumDrive {
         //leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
         encoderMotors = new DcMotorEx[]{leftFront, leftBack, rightFront, rightBack};
 
+        blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "led");
         batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
         spin = hardwareMap.get(DcMotor.class, "spin");
         intake = hardwareMap.get(DcMotor.class, "intake");
@@ -246,12 +249,14 @@ public class robot extends MecanumDrive {
     }
 
     public void armToMiddle(){
-        moveTwoMotors(0.3, 0.28, 0.02);
+        moveTwoMotors(0.5, 0.28, 0.02);
         arm.setPosition(0.35);
     }
 
     public void armToBottom() throws InterruptedException {
-        moveTwoMotors(0.2, 0.24, 0.02);  //change later (test values)
+        moveTwoMotors(0.5, 0.24, 0.02);
+        arm.setPosition(0.2);
+        wrist.setPosition(0.18);//change later (test values)
 //        Thread.sleep(2000);
 //        arm.setPosition(0); //might change later (test values)
     }
@@ -261,7 +266,7 @@ public class robot extends MecanumDrive {
         //arm.setPosition(0.5); //might change later (test values)
     }
 
-    public void armReset() throws InterruptedException {
+    public void armReset() throws InterruptedException{
 //        moveTwoMotors(0.65, 0.28, 0.02);
         moveTwoMotors(1.0, 0.25, 0.02);
         Thread.sleep(1000);
@@ -481,6 +486,11 @@ public class robot extends MecanumDrive {
         ));
     }
 
+    public void flash() throws InterruptedException {
+        blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_FOREST_PALETTE);
+        blinkinLedDriver.wait(1);
+        blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.CP1_2_END_TO_END_BLEND);
+    }
     public static TrajectoryAccelerationConstraint getAccelerationConstraint(double maxAccel) {
         return new ProfileAccelerationConstraint(maxAccel);
     }
