@@ -25,7 +25,7 @@ public class RredBottom extends LinearOpMode {
         int x = 1;
         if (bot.barcode == 0){
             Trajectory traj0 = bot.trajectoryBuilder(start, true) //build trajectory 0
-                    .splineTo(new Vector2d(-8, -42), Math.toRadians(90),
+                    .splineTo(new Vector2d(-6, -37), Math.toRadians(90),
                             bot.getVelocityConstraint(37, driveConstants.MAX_ANG_VEL, driveConstants.TRACK_WIDTH),
                             bot.getAccelerationConstraint(driveConstants.MAX_ACCEL))
                     .build();
@@ -40,7 +40,7 @@ public class RredBottom extends LinearOpMode {
         }
         else if (bot.barcode == 1) {
             Trajectory traj1 = bot.trajectoryBuilder(start,true) //build trajectory 1
-                    .splineTo(new Vector2d(-8, -48), Math.toRadians(90),
+                    .splineTo(new Vector2d(-6, -42), Math.toRadians(90),
                             bot.getVelocityConstraint(37, driveConstants.MAX_ANG_VEL, driveConstants.TRACK_WIDTH),
                             bot.getAccelerationConstraint(driveConstants.MAX_ACCEL))
                     .build();
@@ -55,7 +55,7 @@ public class RredBottom extends LinearOpMode {
         }
         else {
             Trajectory traj2 = bot.trajectoryBuilder(start, true) //build trajectory 2
-                    .splineTo(new Vector2d(-8, -50),  Math.toRadians(90),
+                    .splineTo(new Vector2d(-6, -45),  Math.toRadians(90),
                             bot.getVelocityConstraint(37, driveConstants.MAX_ANG_VEL, driveConstants.TRACK_WIDTH),
                             bot.getAccelerationConstraint(driveConstants.MAX_ACCEL))
                     .build();
@@ -70,7 +70,7 @@ public class RredBottom extends LinearOpMode {
         }
 
         Trajectory trajBack = bot.trajectoryBuilder(endHub) //build trajectory 0   //the top right corner of bottom left square (where carosuel is positioned)
-                .splineTo(new Vector2d(-53, -50),  Math.toRadians(90),
+                .splineTo(new Vector2d(-53, -53),  Math.toRadians(90),
                         bot.getVelocityConstraint(30, driveConstants.MAX_ANG_VEL, driveConstants.TRACK_WIDTH),
                         bot.getAccelerationConstraint(driveConstants.MAX_ACCEL))
                 .build();
@@ -87,10 +87,10 @@ public class RredBottom extends LinearOpMode {
         bot.spinCarousel(0);
         //bot.followTrajectory(your mom)
         Trajectory trajPark = bot.trajectoryBuilder(trajBack.end())
-                .forward(5, bot.getVelocityConstraint(30, driveConstants.MAX_ANG_VEL, driveConstants.TRACK_WIDTH),
+                .forward(10, bot.getVelocityConstraint(30, driveConstants.MAX_ANG_VEL, driveConstants.TRACK_WIDTH),
                         bot.getAccelerationConstraint(driveConstants.MAX_ACCEL)).build();
         Trajectory trajPark1 = bot.trajectoryBuilder(trajPark.end())
-                .strafeLeft(5).build();
+                .strafeLeft(8).build();
         bot.followTrajectory(trajPark);
         bot.followTrajectory(trajPark1);
     }

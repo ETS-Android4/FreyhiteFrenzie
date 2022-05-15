@@ -7,10 +7,10 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 
-@TeleOp (name = "TrulyIntelligentTeleopSoftware", group = "sus")
-public class drive extends LinearOpMode {
+@TeleOp (name = "May 21 Teleop", group = "sus")
+public class driveMay21 extends LinearOpMode {
 
-     // initialize robot
+    // initialize robot
     @Override
     public void runOpMode() throws InterruptedException {
         robot bot = new robot(hardwareMap, this);
@@ -42,19 +42,20 @@ public class drive extends LinearOpMode {
             double ratio;
             double max = Math.max(Math.max(Math.abs(lb), Math.abs(lf)), Math.max(Math.abs(rb), Math.abs(rf)));
             double magnitude = Math.sqrt((lx * lx) + (ly * ly) + (rx * rx));
+            ratio = .8 * magnitude / max;
             if (max == 0) {
                 ratio = 0;
             }
-            else {
-                ratio = .64 * magnitude / max ;
-            }
+
             // sets the motor power
-            bot.leftFront.setPower(lf * ratio * slowMode);
-            bot.leftBack.setPower(lb * ratio * slowMode);
-            bot.rightFront.setPower(rf * ratio * slowMode);
-            bot.rightBack.setPower(rb * ratio * slowMode);
+            bot.leftFront.setPower(lf * ratio * 0.8 * slowMode);
+            bot.leftBack.setPower(lb * ratio * 0.8 * slowMode);
+            bot.rightFront.setPower(rf * ratio * 0.8 * slowMode);
+            bot.rightBack.setPower(rb * ratio * 0.8 * slowMode);
 
             // motor powers are slowed
+
+
 
             // turns on the carousel motor
             if (gamepad2.left_bumper) {
@@ -66,9 +67,9 @@ public class drive extends LinearOpMode {
             else{
                 bot.spin.setPower(0);
             }
-            if (gamepad1.y && !slowModeLate) {
+            if (gamepad1.dpad_up && !slowModeLate) {
                 if (!slow) {
-                    slowMode = 0.5;
+                    slowMode = 0.47;
                     slow = true;
                 }
                 else{
@@ -144,7 +145,7 @@ public class drive extends LinearOpMode {
             armExtLate1 = gamepad2.y;
             armExtLate2 = gamepad2.x;
             armExtLate3 = gamepad2.b;
-            slowModeLate = gamepad1.y;
+            slowModeLate = gamepad2.dpad_up;
 
             //collection controls
             if(gamepad2.left_trigger > 0.5){
@@ -157,22 +158,36 @@ public class drive extends LinearOpMode {
                 bot.intake.setPower(0);
             }
 
-            if (gamepad2.dpad_down) {
-                bot.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
+
+
+
+            if (gamepad2.back && gamepad2.start){
+                break;
             }
-            else if (gamepad2.dpad_up){
-                bot.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE);
+            if (gamepad1.back && gamepad1.start){
+                break;
             }
+
+
+
+
+
+//            if (gamepad2.dpad_down) {
+//                bot.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
+//            }
+//            else if (gamepad2.dpad_up){
+//                bot.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE);
+//            }
             // adds telemetry data
             telemetry.addData("heading", bot.imu.getAngularOrientation().firstAngle);
             telemetry.addData("heading3", bot.imu.getAngularOrientation().thirdAngle);
             double angle = bot.imu.getAngularOrientation().thirdAngle;
-            if (angle > 0.2 || angle < -0.2){
-                bot.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE);
-            }
-            else {
-                bot.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
-            }
+//            if (angle > 0.2 || angle < -0.2){
+//                bot.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE);
+//            }
+//            else {
+//                bot.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+//            }
             //range: front wheels off ground 0.08 to -1.5
             //back wheels off ground 0.08 to 1.5
             //telemetry.addData("carousel", bot.spin.getPower());
@@ -181,20 +196,20 @@ public class drive extends LinearOpMode {
 //            telemetry.addData("rf", rf);
 //            telemetry.addData("lb", lb);
 //            telemetry.addData("rb",rb);
-//            for (int i = 0; i<robot.encoderMotors.length; i++)
-//            {
-//                telemetry.addData("encodermotors" + i + ": ", robot.encoderMotors[i].getCurrentPosition());
-//            }
-            //telemetry.addData("Average Encoder Motors: ", Util.getAverageEncoderPosition(robot.encoderMotors));
-            //telemetry.addData("rightFront:", bot.rightFront.getCurrentPosition());
+            for (int i = 0; i<robot.encoderMotors.length; i++)
+            {
+                telemetry.addData("encodermotors" + i + ": ", robot.encoderMotors[i].getCurrentPosition());
+            }
+            telemetry.addData("Average Encoder Motors: ", Util.getAverageEncoderPosition(robot.encoderMotors));
+            telemetry.addData("rightFront:", bot.rightFront.getCurrentPosition());
             //telemetry.addData("leftSticky", gamepad1.left_stick_y);
-//            telemetry.addData("wrist: ", bot.wrist.getPosition());
-//            telemetry.addData("arm: ", bot.arm.getPosition());
-//            telemetry.addData("leftFront: ", bot.leftFront.getCurrentPosition());
-//            telemetry.addData("lf", bot.leftFront.getPortNumber());
-//            telemetry.addData("lb", bot.leftBack.getPortNumber());
-//            telemetry.addData("rf", bot.rightFront.getPortNumber());
-//            telemetry.addData("rb", bot.rightBack.getPortNumber());
+            telemetry.addData("wrist: ", bot.wrist.getPosition());
+            telemetry.addData("arm: ", bot.arm.getPosition());
+            telemetry.addData("leftFront: ", bot.leftFront.getCurrentPosition());
+            telemetry.addData("lf", bot.leftFront.getPortNumber());
+            telemetry.addData("lb", bot.leftBack.getPortNumber());
+            telemetry.addData("rf", bot.rightFront.getPortNumber());
+            telemetry.addData("rb", bot.rightBack.getPortNumber());
             //telemetry.addData("in: ", in);
             telemetry.update();
         }

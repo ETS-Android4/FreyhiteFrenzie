@@ -91,7 +91,7 @@ public class RblueBottom extends LinearOpMode{
         Trajectory trajPark = bot.trajectoryBuilder(trajBack.end())
             .strafeRight(23).build();
         Trajectory trajPark1 = bot.trajectoryBuilder(trajPark.end())
-                .back(6).build();
+                .back(9).build();
         bot.followTrajectory(trajPark);
         bot.followTrajectory(trajPark1);
 
